@@ -2,19 +2,19 @@ import { Schema } from "mongoose";
 import mongoose from "mongoose";
 const productSchema = new Schema({
     name: {
-        type:string,
+        type:String,
         required:true
     },
     image:{
-        type:string,
+        type:String,
         required:true
     },
     desc:{
-        type:string,
+        type:String,
         required:true
     },
     price:{
-        type:number,
+        type:Number,
         required:true
     },
     aritsan:{

@@ -2,8 +2,9 @@ import { Router } from 'express';
 import {
   createArtisan,
   getAllArtisans,
-} from '../controllers/artisan.controller';
-
+} from '../controllers/artisan.controller.js';
+import { verifyJWT } from '../middlewares/auth.middleware.js';
+import { upload } from '../middlewares/multer.middleware.js';
 const router = Router();
 
 router.route('/list-artisan').post(
@@ -13,9 +14,10 @@ router.route('/list-artisan').post(
       maxCount: 1,
     },
   ]),
+  verifyJWT,
   createArtisan
 );
 
-router.get('/artisan', getAllArtisans);
+router.get('/artisan', verifyJWT,getAllArtisans);
 
 export default router;

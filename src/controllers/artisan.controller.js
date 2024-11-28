@@ -1,9 +1,9 @@
-import { Artisan } from '../models/artisan.model';
-import { ApiError } from '../utils/ApiError';
-import { ApiResponse } from '../utils/ApiResponse';
-import { asyncHandler } from '../utils/asyncHandler';
-import { uploadOnCloudinary } from '../utils/cloudinary';
-import { Product } from '../models/product.model';
+import { Artisan } from '../models/artisan.model.js';
+import { ApiError } from '../utils/ApiError.js';
+import { ApiResponse } from '../utils/ApiResponse.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { uploadOnCloudinary } from '../utils/cloudinary.js';
+
 
 const createArtisan = asyncHandler(async (req, res) => {
   const { name, desc, artisan_id } = req.body;
@@ -36,7 +36,7 @@ const createArtisan = asyncHandler(async (req, res) => {
       })
     );
   } catch (error) {
-    next(new ApiError(error.message, 400));
+    throw new ApiError(error.message, 400);
   }
 });
 
@@ -51,7 +51,7 @@ const getAllArtisans = asyncHandler(async (req, res) => {
       })
     );
   } catch (error) {
-    next(new ApiError(error.message, 400));
+    throw new ApiError(error.message, 400);
   }
 });
 

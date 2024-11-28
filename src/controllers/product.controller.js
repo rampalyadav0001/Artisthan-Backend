@@ -1,17 +1,25 @@
-import { Product } from '../models/product.model';
-import { ApiError } from '../utils/ApiError';
-import { ApiResponse } from '../utils/ApiResponse';
-import { uploadOnCloudinary } from '../utils/cloudinary';
+import { Product } from '../models/product.model.js';
+import { ApiError } from '../utils/ApiError.js';
+import { ApiResponse } from '../utils/ApiResponse.js';
+import { uploadOnCloudinary } from '../utils/cloudinary.js';
+import {asyncHandler} from '../utils/asyncHandler.js';
 
-const createProduct = async (req, res, next) => {
+const createProduct = asyncHandler(async (req, res) => {
   const { name, desc, price, artisan } = req.body;
 
+  // Validate required fields
+  if (!name || !desc || !price || !artisan) {
+    throw new ApiError(400, 'All fields (name, desc, price, artisan) are required');
+  }
+
   let image = { url: '' };
+
+  // Handle image upload
   if (req.files && req.files.image) {
-    const { path } = req.file.image[0];
+    const { path } = req.files.image[0];
     if (path) {
       image = await uploadOnCloudinary(path);
-      if (!image) {
+      if (!image || !image.url) {
         throw new ApiError(400, 'Image upload failed');
       }
     }
@@ -27,19 +35,19 @@ const createProduct = async (req, res, next) => {
 
   try {
     const newProduct = await product.save();
-    return res.status(200).json(
+    return res.status(201).json(
       new ApiResponse({
-        statusCode: 200,
+        statusCode: 201,
         data: { product: newProduct },
         message: 'Product created successfully',
       })
     );
   } catch (error) {
-    next(new ApiError(error.message, 400));
+    throw new ApiError(error.message, 500);
   }
-};
+});
 
-const getAllProducts = async (req, res, next) => {
+const getAllProducts = asyncHandler(async (req, res) => {
   try {
     const products = await Product.find();
     return res.status(200).json(
@@ -50,24 +58,30 @@ const getAllProducts = async (req, res, next) => {
       })
     );
   } catch (error) {
-    next(new ApiError(error.message, 400));
+  throw new ApiError(error.message, 500);
   }
-};
+});
 
-const getAllProductByArtisan=asyncHandler(async(req,res)=>{
-    const artisan=req.query;
-    if(!artisan){
-      return res.status(400).json({
-        message:"Please provide artisan"
+const getAllProductByArtisan = asyncHandler(async (req, res) => {
+  const { artisan } = req.query;
+
+  // Validate artisan query
+  if (!artisan) {
+    throw new ApiError(400, 'Please provide artisan');
+  }
+
+  try {
+    const products = await Product.find({ artisan });
+    return res.status(200).json(
+      new ApiResponse({
+        statusCode: 200,
+        data: { products },
+        message: 'Products fetched successfully',
       })
-    } 
-      const products=await Product.find({artisan:artisan});
-      return res.status(200).json(new ApiResponse(
-          200,
-          {products},
-          "Products fetched successfully"
-      ))
+    );
+  } catch (error) {
+    throw new ApiError(error.message, 500);
+  }
+});
 
-})
-
-export { createProduct, getAllProducts,getAllProductByArtisan };
+export { createProduct, getAllProducts, getAllProductByArtisan };
