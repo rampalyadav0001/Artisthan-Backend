@@ -13,8 +13,8 @@ const artisanSchema= new Schema({
         type: String,
         required: true
     },
-    artisan: {
-        type: String,
+    artisan_id: {
+        type: Number,
         required: true
     }
     

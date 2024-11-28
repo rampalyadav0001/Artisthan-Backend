@@ -4,13 +4,14 @@ import { ApiResponse } from '../utils/ApiResponse.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { uploadOnCloudinary } from '../utils/cloudinary.js';
 
-
 const createArtisan = asyncHandler(async (req, res) => {
   const { name, desc, artisan_id } = req.body;
 
   let image = { url: '' };
+  console.log(req.files);
   if (req.files && req.files.image) {
-    const { path } = req.file.image[0];
+    const path = req.files.image[0].path;
+
     if (path) {
       image = await uploadOnCloudinary(path);
       if (!image) {
@@ -18,7 +19,6 @@ const createArtisan = asyncHandler(async (req, res) => {
       }
     }
   }
-
   const artisan = new Artisan({
     name,
     image: image.url,
@@ -54,7 +54,5 @@ const getAllArtisans = asyncHandler(async (req, res) => {
     throw new ApiError(error.message, 400);
   }
 });
-
-
 
 export { createArtisan, getAllArtisans };

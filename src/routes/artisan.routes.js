@@ -7,7 +7,7 @@ import { verifyJWT } from '../middlewares/auth.middleware.js';
 import { upload } from '../middlewares/multer.middleware.js';
 const router = Router();
 
-router.route('/list-artisan').post(
+router.route('/create-artisan').post(
   upload.fields([
     {
       name: 'image',
@@ -18,6 +18,6 @@ router.route('/list-artisan').post(
   createArtisan
 );
 
-router.get('/artisan', verifyJWT,getAllArtisans);
+router.get('/list-artisan', verifyJWT,getAllArtisans);
 
 export default router;

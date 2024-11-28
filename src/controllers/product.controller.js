@@ -1,17 +1,25 @@
+import { Artisan } from '../models/artisan.model.js';
 import { Product } from '../models/product.model.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
 import { uploadOnCloudinary } from '../utils/cloudinary.js';
-import {asyncHandler} from '../utils/asyncHandler.js';
 
 const createProduct = asyncHandler(async (req, res) => {
   const { name, desc, price, artisan } = req.body;
 
   // Validate required fields
   if (!name || !desc || !price || !artisan) {
-    throw new ApiError(400, 'All fields (name, desc, price, artisan) are required');
+    throw new ApiError(
+      400,
+      'All fields (name, desc, price, artisan) are required'
+    );
   }
 
+  const existingArtisan = await Artisan.findOne({ name: artisan });
+  if (!existingArtisan) {
+    throw new ApiError(400, 'Artisan not found');
+  }
   let image = { url: '' };
 
   // Handle image upload
@@ -24,13 +32,12 @@ const createProduct = asyncHandler(async (req, res) => {
       }
     }
   }
-
   const product = new Product({
     name,
     image: image.url,
     desc,
     price,
-    artisan,
+    artisan: existingArtisan._id,
   });
 
   try {
@@ -58,7 +65,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
       })
     );
   } catch (error) {
-  throw new ApiError(error.message, 500);
+    throw new ApiError(error.message, 500);
   }
 });
 
@@ -84,4 +91,4 @@ const getAllProductByArtisan = asyncHandler(async (req, res) => {
   }
 });
 
-export { createProduct, getAllProducts, getAllProductByArtisan };
+export { createProduct, getAllProductByArtisan, getAllProducts };
