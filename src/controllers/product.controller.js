@@ -39,15 +39,10 @@ const createProduct = asyncHandler(async (req, res) => {
     price,
     artisan: existingArtisan._id,
   });
-
   try {
     const newProduct = await product.save();
-    return res.status(201).json(
-      new ApiResponse({
-        statusCode: 201,
-        data: { product: newProduct },
-        message: 'Product created successfully',
-      })
+    return res.status(200).json(
+      new ApiResponse(200,newProduct,'Product created successfully')
     );
   } catch (error) {
     throw new ApiError(error.message, 500);
@@ -58,11 +53,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
   try {
     const products = await Product.find();
     return res.status(200).json(
-      new ApiResponse({
-        statusCode: 200,
-        data: { products },
-        message: 'Products fetched successfully',
-      })
+      new ApiResponse(200,products,'Products fetched successfully')
     );
   } catch (error) {
     throw new ApiError(error.message, 500);
@@ -70,25 +61,34 @@ const getAllProducts = asyncHandler(async (req, res) => {
 });
 
 const getAllProductByArtisan = asyncHandler(async (req, res) => {
-  const { artisan } = req.query;
+  const { artisanId } = req.query;
 
   // Validate artisan query
-  if (!artisan) {
-    throw new ApiError(400, 'Please provide artisan');
+  if (!artisanId) {
+    throw new ApiError(400, 'Please provide artisan ID');
   }
 
   try {
-    const products = await Product.find({ artisan });
+    // Find artisan by artisan_id
+    const artisan = await Artisan.findOne({ artisan_id: artisanId });
+
+    // Check if artisan exists
+    if (!artisan) {
+      throw new ApiError(404, 'Artisan not found');
+    }
+
+    // Find products by artisan ID
+    const products = await Product.find({ artisan: artisan._id });
+
+    // Send successful response
     return res.status(200).json(
-      new ApiResponse({
-        statusCode: 200,
-        data: { products },
-        message: 'Products fetched successfully',
-      })
+      new ApiResponse(200, products, 'Products fetched successfully')
     );
   } catch (error) {
-    throw new ApiError(error.message, 500);
+    // Handle any other errors
+    throw new ApiError(500, error.message || 'Internal Server Error');
   }
 });
+
 
 export { createProduct, getAllProductByArtisan, getAllProducts };
