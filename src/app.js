@@ -25,4 +25,7 @@ app.use('/api/v1/products', productRouter);
 import aritsanRouter from './routes/artisan.routes.js';
 app.use('/api/v1/artisan', aritsanRouter);
 
+import cartRouter from './routes/cart.routes.js';
+app.use('/api/v1/cart', cartRouter);
+
 export default app;
