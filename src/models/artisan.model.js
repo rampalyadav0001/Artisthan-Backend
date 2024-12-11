@@ -6,14 +6,12 @@ const artisanSchema = new Schema({
   },
   image: {
     type: String,
-    required: true,
   },
   desc: {
     type: String,
-    required: true,
   },
   artisan_id: {
-    type: Number,
+    type: String,
     required: true,
   },
   craft: {
@@ -34,7 +32,6 @@ const artisanSchema = new Schema({
   },
   state: {
     type: String,
-    required: true,
   },
 });
 
