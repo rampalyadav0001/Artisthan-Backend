@@ -16,7 +16,7 @@ const addressSchema = new mongoose.Schema({
     type: String,
     required: [true, "State is required"],
   },
-  zip: {
+  pincode: {
     type: Number,
     required: [true, "Zip is required"],
   },

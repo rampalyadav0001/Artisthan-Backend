@@ -14,10 +14,9 @@ router.route('/create-artisan').post(
       maxCount: 1,
     },
   ]),
-  verifyJWT,
   createArtisan
 );
 
-router.get('/list-artisan', verifyJWT,getAllArtisans);
+router.get('/list-artisan', verifyJWT,getAllArtisans); 
 
 export default router;

@@ -5,8 +5,10 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { uploadOnCloudinary } from '../utils/cloudinary.js';
 
 const createArtisan = asyncHandler(async (req, res) => {
-  const { name, desc, artisan_id } = req.body;
-
+  const { name, desc, artisan_id ,craft,mobile,gender,address,state} = req.body;
+  if(!name || !desc || !artisan_id || !craft|| !mobile || !gender || !address || !state){
+    throw new ApiError(400,"Please provide all the required fields")
+  }
   let image = { url: '' };
   console.log(req.files);
   if (req.files && req.files.image) {
@@ -24,6 +26,11 @@ const createArtisan = asyncHandler(async (req, res) => {
     image: image.url,
     desc,
     artisan_id,
+    craft,
+    mobile,
+    gender,
+    address,
+    state,
   });
 
   try {
